@@ -11,8 +11,8 @@ void main() {
     routes: {
       '/': (context) => Home(),
       '/categories': (context) => Categories(),
-      '/addIncome': (context) => Addincome(),
-      '/addExpense': (context) => Addexpense(),
+      '/addIncome': (context) => const Addincome(),
+      '/addExpense': (context) => const Addexpense(),
     },
   ));
 }

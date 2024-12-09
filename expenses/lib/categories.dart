@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'Category.dart';
 import 'expense.dart';
 import 'expenses.dart';
