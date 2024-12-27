@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'Category.dart';
+import 'ECategory.dart';
 import 'expense.dart';
 import 'expenses.dart';
 import 'components/categoryBtn.dart';
@@ -14,18 +14,24 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  List<Category> categories = Category.categories;
+  List<ECategory> categories = ECategory.categories;
 
   void calculateAllCategoryTotals() {
-    for (var category in Category.categories) {
+    for (var category in ECategory.categories) {
       category.calculateTotal(Expense.expenses);
     }
   }
 
+  void fetchCategories() async {
+    await ECategory.getCat();
+    calculateAllCategoryTotals();
+    setState(() {});
+  }
+
   @override
   void initState() {
+    fetchCategories();
     super.initState();
-    calculateAllCategoryTotals();
   }
 
   @override

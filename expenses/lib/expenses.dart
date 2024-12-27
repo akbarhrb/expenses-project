@@ -3,19 +3,36 @@
 import 'package:expenses/components/listTile.dart';
 import 'package:flutter/material.dart';
 import 'expense.dart';
-import 'Category.dart';
+import 'ECategory.dart';
 
-class CategoryExpensesPage extends StatelessWidget {
-  final Category category;
+class CategoryExpensesPage extends StatefulWidget {
+  final ECategory category;
 
   const CategoryExpensesPage({Key? key, required this.category})
       : super(key: key);
 
   @override
+  State<CategoryExpensesPage> createState() => _CategoryExpensesPageState();
+}
+
+class _CategoryExpensesPageState extends State<CategoryExpensesPage> {
+  void fetchExpenses() async {
+    await Expense.getExpenses();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    fetchExpenses();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Filter expenses for the selected category
     List<Expense> filteredExpenses = Expense.expenses
-        .where((expense) => expense.category?.catName == category.catName)
+        .where(
+            (expense) => expense.category?.catName == widget.category.catName)
         .toList();
 
     return Scaffold(
@@ -27,7 +44,7 @@ class CategoryExpensesPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
         title: Text(
-          '${category.catName} Expenses',
+          '${widget.category.catName} Expenses',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -46,7 +63,7 @@ class CategoryExpensesPage extends StatelessWidget {
                     final expense = filteredExpenses[index];
                     return CustomListTile(
                         name: expense.name as String,
-                        category: expense.category as Category,
+                        category: expense.category as ECategory,
                         month: expense.month as String,
                         date: expense.createdAt as DateTime,
                         amount: expense.amount as double);

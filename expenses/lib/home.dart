@@ -6,7 +6,7 @@ import 'components/categoryBtn.dart';
 import 'income.dart';
 import 'expense.dart';
 import 'expenses.dart';
-import 'Category.dart';
+import 'ECategory.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -36,6 +36,9 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    fetchCategories();
+    fetchIncomes();
+    fetchExpenses();
     super.initState();
     setState(() {});
     calculateTotalIncome();
@@ -55,6 +58,26 @@ class _HomeState extends State<Home> {
     totalExpenses = Expense.expenses
         .where((expense) => expense.month == month[index])
         .fold(0, (sum, expense) => sum + (expense.amount?.toInt() ?? 0));
+    setState(() {});
+  }
+
+  void fetchCategories() async {
+    await ECategory.getCat();
+    setState(() {});
+  }
+
+  Expense? lastExp;
+  bool loaded = false;
+  void fetchExpenses() async {
+    loaded = false;
+    expenses = await Expense.getExpenses();
+    lastExp = expenses[expenses.length - 1];
+    setState(() {});
+    loaded = true;
+  }
+
+  void fetchIncomes() async {
+    await Income.getIncomes();
     setState(() {});
   }
 
@@ -153,6 +176,7 @@ class _HomeState extends State<Home> {
                         } else {
                           index -= 1;
                         }
+                        fetchIncomes();
                         calculateTotalIncome();
                         calculateTotalExpenses();
                         setState(() {});
@@ -181,6 +205,7 @@ class _HomeState extends State<Home> {
                             } else {
                               index += 1;
                             }
+                            fetchIncomes();
                             calculateTotalIncome();
                             calculateTotalExpenses();
                             setState(() {});
@@ -399,7 +424,7 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "Transactions",
+                    "last Expenses",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0,
@@ -421,24 +446,24 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: screenWidth * 0.9,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 4,
-                  itemBuilder: (BuildContext context, int index) {
-                    return CustomListTile(
-                        name: expenses[index].name as String,
-                        category: expenses[index].category as Category,
-                        date: expenses[index].createdAt as DateTime,
-                        month: expenses[index].month as String,
-                        amount: expenses[index].amount as double);
-                  }),
-            ),
-          ),
+          loaded == false
+              ? Align(
+                  child: Container(
+                  margin: EdgeInsets.fromLTRB(0, 70.0, 0, 0),
+                  child: SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: CircularProgressIndicator(),
+                  ),
+                ))
+              : Align(
+                  child: CustomListTile(
+                      name: lastExp!.name as String,
+                      category: lastExp!.category as ECategory,
+                      date: lastExp!.createdAt as DateTime,
+                      amount: lastExp!.amount as double,
+                      month: lastExp!.month as String),
+                )
         ],
       ),
     );

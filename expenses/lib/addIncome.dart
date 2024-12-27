@@ -27,6 +27,20 @@ class _AddincomeState extends State<Addincome> {
     'November',
     'December'
   ];
+  final Map<String, int> monthIndex = {
+    'January': 1,
+    'February': 2,
+    'March': 3,
+    'April': 4,
+    'May': 5,
+    'June': 6,
+    'July': 7,
+    'August': 8,
+    'September': 9,
+    'October': 10,
+    'November': 11,
+    'December': 12
+  };
 
   void addIncome(int amount, String month) {
     Income.incomes.add(Income(amount: amount, month: month));
@@ -78,7 +92,7 @@ class _AddincomeState extends State<Addincome> {
                 ),
                 DropdownMenu(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  initialSelection: month[0],
+                  initialSelection: 'Select a month',
                   dropdownMenuEntries: month.map((mo) {
                     return (DropdownMenuEntry(value: mo, label: mo.toString()));
                   }).toList(),
@@ -94,16 +108,25 @@ class _AddincomeState extends State<Addincome> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
                           int? amount = int.tryParse(incomeController.text);
                           String? month = selectedMonth as String;
-                          addIncome(amount as int, month);
+                          int monthNb = monthIndex[month] as int;
+                          await Income.addIncome(amount as int, monthNb);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                backgroundColor: Colors.blue,
+                                content:
+                                    Text('Income is Added SuccessFully!!')),
+                          );
+                          Navigator.pop(context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text('enter income as a number!')),
+                                content:
+                                    Text('enter income and month correctly !')),
                           );
                         }
                         incomeController.clear();

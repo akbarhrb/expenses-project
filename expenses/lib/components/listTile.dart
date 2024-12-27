@@ -1,11 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:intl/intl.dart';
-import 'package:expenses/Category.dart';
+import 'package:expenses/ECategory.dart';
 import 'package:flutter/material.dart';
 
 class CustomListTile extends StatelessWidget {
   final String name;
-  final Category category;
+  final ECategory category;
   final DateTime date;
   final String month;
   final double amount;

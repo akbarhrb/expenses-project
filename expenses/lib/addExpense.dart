@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Category.dart';
+import 'ECategory.dart';
 import 'expense.dart';
 
 class Addexpense extends StatefulWidget {
@@ -14,7 +14,7 @@ class _AddexpenseState extends State<Addexpense> {
   TextEditingController expenseAmount = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? selectedMonth;
-  Category? selectedCat;
+  ECategory? selectedCat;
   final List<String> month = [
     'January',
     'February',
@@ -29,9 +29,20 @@ class _AddexpenseState extends State<Addexpense> {
     'November',
     'December'
   ];
+  int cid = 1;
+  final Map<String, int> catId = {
+    'Home': 1,
+    'Shopping': 2,
+    'Travel': 3,
+    'Gifts': 4,
+    'Education': 5,
+    'Clothes': 6,
+    'HealthCare': 7,
+    'Groceries': 8
+  };
 
-  List<Category> categories = Category.categories;
-  void addExpense(Category cat, String name, double amount) {
+  List<ECategory> categories = ECategory.categories;
+  void addExpense(ECategory cat, String name, double amount) {
     Expense.expenses.add(Expense(
         category: cat,
         name: name,
@@ -39,7 +50,7 @@ class _AddexpenseState extends State<Addexpense> {
         month: selectedMonth,
         createdAt: DateTime.now()));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Expense added successfully!')),
+      const SnackBar(content: Text('Expense added successfully!')),
     );
   }
 
@@ -113,6 +124,7 @@ class _AddexpenseState extends State<Addexpense> {
                   onSelected: (value) {
                     setState(() {
                       selectedCat = value;
+                      cid = catId[selectedCat.toString()] as int;
                     });
                   },
                 ),
@@ -134,23 +146,30 @@ class _AddexpenseState extends State<Addexpense> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         String expName = expenseName.text;
                         double? amount = double.tryParse(expenseAmount.text);
                         if (selectedCat == null || selectedMonth == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                                 content:
                                     Text('enter both month and category!')),
                           );
                         }
                         try {
-                          addExpense(selectedCat as Category, expName,
-                              amount as double);
+                          await Expense.addExpense(cid, expName,
+                              amount as double, selectedMonth as String);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                backgroundColor: Colors.blue,
+                                content:
+                                    Text('Expenses is inserted Successfully!')),
+                          );
+                          Navigator.pop(context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                                 content: Text('enter expense as a number!')),
                           );
                         }
