@@ -22,9 +22,12 @@ class _CategoriesState extends State<Categories> {
     }
   }
 
+  bool loaded = false;
   void fetchCategories() async {
+    loaded = false;
     await ECategory.getCat();
     calculateAllCategoryTotals();
+    loaded = true;
     setState(() {});
   }
 
@@ -57,64 +60,77 @@ class _CategoriesState extends State<Categories> {
             // SizedBox(
             //   height: 20.0,
             // ),
-            Expanded(
-              child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CategoryBtn(
-                              title: categories[index].catName ??
-                                  'Unknown Category',
-                              catIcon: categories[index].iconData ?? Icons.abc,
+            loaded == false
+                ? Align(
+                    child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 70.0, 0, 0),
+                    child: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ))
+                : Expanded(
+                    child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.8,
+                        ),
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Spacer(),
-                            Text(
-                              '${categories[index].total} \$',
-                              style: TextStyle(
-                                  fontSize: 20.0, color: Colors.purple),
-                            ),
-                            SizedBox(height: 13.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              child: FilledButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CategoryExpensesPage(
-                                              category: categories[index]),
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CategoryBtn(
+                                    title: categories[index].catName ??
+                                        'Unknown Category',
+                                    catIcon:
+                                        categories[index].iconData ?? Icons.abc,
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    '${categories[index].total} \$',
+                                    style: TextStyle(
+                                        fontSize: 20.0, color: Colors.purple),
+                                  ),
+                                  SizedBox(height: 13.0),
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: FilledButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CategoryExpensesPage(
+                                                    category:
+                                                        categories[index]),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('show all'),
                                     ),
-                                  );
-                                },
-                                child: const Text('show all'),
+                                  ),
+                                  Spacer(),
+                                ],
                               ),
                             ),
-                            Spacer(),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-            ),
+                          );
+                        }),
+                  ),
           ],
         ),
       ),
