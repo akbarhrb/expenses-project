@@ -92,6 +92,31 @@ class Expense {
       return expenses;
     }
   }
+
+  static Future<List<Expense>> searchExpense(String q) async {
+    final url = Uri.http(baseUrl, 'search.php', {'q': q});
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final jsonResponse = convert.jsonDecode(response.body);
+      expenses.clear();
+      for (var row in jsonResponse) {
+        String iconName = row['iconData'];
+        IconData? icon = iconMapping[iconName.toLowerCase()];
+        icon = icon ?? Icons.error;
+        Expense exp = Expense(
+            category: ECategory(
+                catName: row['cName'],
+                iconData: icon,
+                total: double.tryParse(row['total'])),
+            name: row['name'],
+            amount: double.tryParse(row['amount']),
+            month: row['month'],
+            createdAt: DateTime.tryParse(row['createdAt']));
+        expenses.add(exp);
+      }
+    }
+    return expenses;
+  }
 }
 
 List<ECategory> categories = ECategory.categories;

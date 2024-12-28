@@ -432,10 +432,10 @@ class _HomeState extends State<Home> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/categories');
+                      Navigator.pushNamed(context, '/allExpenses');
                     },
                     child: const Text(
-                      "See All",
+                      "See All / Search",
                       style: TextStyle(
                         color: Colors.blue,
                         decoration: TextDecoration.underline,
@@ -457,12 +457,22 @@ class _HomeState extends State<Home> {
                   ),
                 ))
               : Align(
-                  child: CustomListTile(
-                      name: lastExp!.name as String,
-                      category: lastExp!.category as ECategory,
-                      date: lastExp!.createdAt as DateTime,
-                      amount: lastExp!.amount as double,
-                      month: lastExp!.month as String),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        return CustomListTile(
+                            name: expenses[expenses.length - index - 1].name
+                                as String,
+                            category: expenses[expenses.length - index - 1]
+                                .category as ECategory,
+                            date: expenses[expenses.length - index - 1]
+                                .createdAt as DateTime,
+                            amount: expenses[expenses.length - index - 1].amount
+                                as double,
+                            month: expenses[expenses.length - index - 1].month
+                                as String);
+                      }),
                 )
         ],
       ),

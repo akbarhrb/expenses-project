@@ -1,4 +1,5 @@
 import 'package:expenses/addIncome.dart';
+import 'package:expenses/allExpenses.dart';
 import 'package:flutter/material.dart';
 import 'categories.dart';
 import 'home.dart';
@@ -13,6 +14,7 @@ void main() {
       '/categories': (context) => Categories(),
       '/addIncome': (context) => const Addincome(),
       '/addExpense': (context) => const Addexpense(),
+      '/allExpenses': (context) => const Allexpenses(),
     },
   ));
 }
